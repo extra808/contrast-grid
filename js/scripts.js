@@ -136,10 +136,10 @@
 
 
       return `
-        <td class="${ tdClass }" style="
-          --color-1: ${ tinycolor(data.color).toHexString() };
-          --color-2: ${ tinycolor(compareColor).toHexString() };
-          --hover-text-color: ${ tinycolor.mostReadable(data.color, ["#fff", "#000"]).toHexString() };
+        <td tabindex="0" role="button" class="${ tdClass }" style="
+            --color-1: ${ tinycolor(data.color).toHexString() };
+            --color-2: ${ tinycolor(compareColor).toHexString() };
+            --hover-text-color: ${ tinycolor.mostReadable(data.color, ["#fff", "#000"]).toHexString() };
         ">
           ${ readability.toFixed(2) }
         </td>
@@ -195,6 +195,7 @@
         ${ buildHeaderRow(xAxisData) }
         ${ buildDataRows(xAxisData, yAxisData, contrast, hideInput) }
       </table>
+      <dialog id="popover" aria-live="polite"></dialog>
     `;
   }
 
@@ -349,6 +350,37 @@
   }
 
   /**
+   * Storage for setTimeout() to hide the popover alert.
+   */
+  let popoverTimeout;
+
+  /**
+   * Copies the color contrast ratio to the user's clipboard.
+   *
+   * @param {PointerEvent} e the click event.
+   */
+  async function copyOnClick(e) {
+    const { target } = e;
+
+    if (target.tagName === 'TD') {
+      const ratio = target.textContent.trim();
+      navigator.clipboard.writeText(ratio)
+        .then(() => {
+          clearTimeout(popoverTimeout);
+
+          const dialog = document.querySelector('#popover');
+          dialog.innerText = `Contrast ratio "${ratio}" copied to clipboard!`;
+          dialog.show();
+
+          popoverTimeout = setTimeout(() => {
+            dialog.close();
+          }, 5000);
+        })
+        .catch(err => console.error(err))
+    }
+  }
+
+  /**
    * Initialize everything.
    */
   function init() {
@@ -370,6 +402,7 @@
     });
 
     tableContainer.addEventListener('mouseover', handleTableMouseover);
+    tableContainer.addEventListener('click', copyOnClick);
 
     hydrateForm(form, xAxisData, yAxisData);
     writeTableToDOM(xAxisData, yAxisData, 7, false);
