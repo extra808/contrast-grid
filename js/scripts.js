@@ -120,13 +120,9 @@
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {String} compareColor - String containing a single valid color
    * @param {Number} contrast - Color contrast value set.
-   * @param {Boolean} hideInput - Should colors that don't meet the set contrast be hidden?
    * @returns {String} - String containing HTML
    */
-  function buildTableTds(xAxisData, compareColor, contrast, hideInput) {
-    if (!hideInput) {
-      contrast = 0;
-    }
+  function buildTableTds(xAxisData, compareColor, contrast) {
     return xAxisData.map(data => {
       let tdClass = "";
       const readability = tinycolor.readability(data.color, compareColor);
@@ -153,10 +149,9 @@
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {Array} yAxisData - Array of objects containing valid colors and optional names.
    * @param {Number} contrast - Color contrast value set.
-   * @param {Boolean} hideInput - Should colors that don't meet the set contrast be hidden?
    * @returns {String} - String containing HTML
    */
-  function buildDataRows(xAxisData, yAxisData, contrast, hideInput) {
+  function buildDataRows(xAxisData, yAxisData, contrast) {
 
     return yAxisData.map(data => {
       return `
@@ -174,7 +169,7 @@
 
             ${ data.color }
           </th>
-          ${ buildTableTds(xAxisData, data.color, contrast, hideInput) }
+          ${ buildTableTds(xAxisData, data.color, contrast) }
         </tr>
       `;
     }).join('');
@@ -186,14 +181,13 @@
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {Array} yAxisData - Array of objects containing valid colors and optional names.
    * @param {Number} contrast - Color contrast value set.
-   * @param {Boolean} hideInput - Should colors that don't meet the set contrast be hidden?
    * @returns {String} - String containing HTML
    */
-  function buildTable(xAxisData, yAxisData, contrast, hideInput) {
+  function buildTable(xAxisData, yAxisData, contrast) {
     return `
       <table>
         ${ buildHeaderRow(xAxisData) }
-        ${ buildDataRows(xAxisData, yAxisData, contrast, hideInput) }
+        ${ buildDataRows(xAxisData, yAxisData, contrast) }
       </table>
       <dialog id="popover" aria-live="polite"></dialog>
     `;
@@ -232,12 +226,11 @@
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {Array} yAxisData - Array of objects containing valid colors and optional names.
    * @param {Number} contrast - Color contrast value set.
-   * @param {Boolean} hideInput - Should colors that don't meet the set contrast be hidden?
    * @param {Boolean} updateQueryParams - Should the query string be updated to reflect the new colors?
    */
-  function writeTableToDOM(xAxisData, yAxisData, contrast, hideInput, updateQueryParams = true) {
+  function writeTableToDOM(xAxisData, yAxisData, contrast, updateQueryParams = true) {
     if (xAxisData?.length) {
-      document.querySelector('.table-container').innerHTML = buildTable(xAxisData, yAxisData, contrast, hideInput);
+      document.querySelector('.table-container').innerHTML = buildTable(xAxisData, yAxisData, contrast);
     }
 
     if (updateQueryParams) setQueryParams(xAxisData, yAxisData);
@@ -251,7 +244,6 @@
     const xInput = form.querySelector('.color-input-x');
     const yInput = form.querySelector('.color-input-y');
     const contrastInput = contrast.value;
-    const hideInput = hideBelow.checked;
     const xAxisText = xInput.value;
     const yAxisText = yInput.value;
 
@@ -265,7 +257,7 @@
     const xAxisData = getInputData(xInput.value);
     const yAxisData = getInputData(yInput.value);
 
-    writeTableToDOM(xAxisData, yAxisData, contrastInput, hideInput);
+    writeTableToDOM(xAxisData, yAxisData, contrastInput);
   }
 
   /**
@@ -279,10 +271,9 @@
     const xAxisData = getInputData(xInput.value);
     const yAxisData = yInput.value.trim().length ? getInputData(yInput.value) : getInputData(xInput.value);
     const contrastInput = e.target.querySelector('#contrast').value;
-    const hideInput = e.target.querySelector('#hideBelow').checked;
     e.preventDefault(); // Don't reload the page.
 
-    writeTableToDOM(xAxisData, yAxisData, contrastInput, hideInput);
+    writeTableToDOM(xAxisData, yAxisData, contrastInput);
   }
 
   /**
@@ -315,7 +306,7 @@
     const yAxisData = dataFromParams.yAxisData ? dataFromParams.yAxisData : xAxisData;
 
     hydrateForm(form, xAxisData, yAxisData);
-    writeTableToDOM(xAxisData, yAxisData, contrastInput, hideInput, false); // Do not update the query params when writing data to DOM.
+    writeTableToDOM(xAxisData, yAxisData, contrastInput, false); // Do not update the query params when writing data to DOM.
   }
 
   /**
@@ -405,7 +396,7 @@
     tableContainer.addEventListener('click', copyOnClick);
 
     hydrateForm(form, xAxisData, yAxisData);
-    writeTableToDOM(xAxisData, yAxisData, 7, false);
+    writeTableToDOM(xAxisData, yAxisData, 1, false);
   }
 
   // Lets do this!

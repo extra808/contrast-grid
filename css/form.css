@@ -165,18 +165,3 @@ textarea {
 .datalist-buttons > button[data-value="21"] {
   right: 0;
 }
-
-.checkbox-flex {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  line-height: 1;
-  min-height: 3rem;
-}
-
-.checkbox-flex input[type="checkbox"] {
-  font-size: 1em;
-  min-height: 1em;
-  min-width: 1em;
-  margin: 0px;
-}
