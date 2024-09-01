@@ -119,20 +119,15 @@
    *
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {String} compareColor - String containing a single valid color
-   * @param {Number} contrast - Color contrast value set.
    * @returns {String} - String containing HTML
    */
-  function buildTableTds(xAxisData, compareColor, contrast) {
+  function buildTableTds(xAxisData, compareColor) {
     return xAxisData.map(data => {
       let tdClass = "";
       const readability = tinycolor.readability(data.color, compareColor);
-      if (readability < contrast) {
-        tdClass = "doesNotMeet";
-      }
-
 
       return `
-        <td tabindex="0" role="button" class="${ tdClass }" style="
+        <td tabindex="0" role="button" style="
             --color-1: ${ tinycolor(data.color).toHexString() };
             --color-2: ${ tinycolor(compareColor).toHexString() };
             --hover-text-color: ${ tinycolor.mostReadable(data.color, ["#fff", "#000"]).toHexString() };
@@ -148,10 +143,9 @@
    *
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {Array} yAxisData - Array of objects containing valid colors and optional names.
-   * @param {Number} contrast - Color contrast value set.
    * @returns {String} - String containing HTML
    */
-  function buildDataRows(xAxisData, yAxisData, contrast) {
+  function buildDataRows(xAxisData, yAxisData) {
 
     return yAxisData.map(data => {
       return `
@@ -169,7 +163,7 @@
 
             ${ data.color }
           </th>
-          ${ buildTableTds(xAxisData, data.color, contrast) }
+          ${ buildTableTds(xAxisData, data.color) }
         </tr>
       `;
     }).join('');
@@ -180,14 +174,13 @@
    *
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {Array} yAxisData - Array of objects containing valid colors and optional names.
-   * @param {Number} contrast - Color contrast value set.
    * @returns {String} - String containing HTML
    */
-  function buildTable(xAxisData, yAxisData, contrast) {
+  function buildTable(xAxisData, yAxisData) {
     return `
       <table>
         ${ buildHeaderRow(xAxisData) }
-        ${ buildDataRows(xAxisData, yAxisData, contrast) }
+        ${ buildDataRows(xAxisData, yAxisData) }
       </table>
       <dialog id="popover" aria-live="polite"></dialog>
     `;
@@ -225,14 +218,14 @@
    *
    * @param {Array} xAxisData - Array of objects containing valid colors and optional names.
    * @param {Array} yAxisData - Array of objects containing valid colors and optional names.
-   * @param {Number} contrast - Color contrast value set.
    * @param {Boolean} updateQueryParams - Should the query string be updated to reflect the new colors?
    */
-  function writeTableToDOM(xAxisData, yAxisData, contrast, updateQueryParams = true) {
+  function writeTableToDOM(xAxisData, yAxisData, updateQueryParams = true) {
     if (xAxisData?.length) {
-      document.querySelector('.table-container').innerHTML = buildTable(xAxisData, yAxisData, contrast);
+      document.querySelector('.table-container').innerHTML = buildTable(xAxisData, yAxisData);
     }
 
+    setCellContrast(contrast.value);
     if (updateQueryParams) setQueryParams(xAxisData, yAxisData);
   }
 
@@ -243,7 +236,6 @@
     const form = document.querySelector('.color-input-form');
     const xInput = form.querySelector('.color-input-x');
     const yInput = form.querySelector('.color-input-y');
-    const contrastInput = contrast.value;
     const xAxisText = xInput.value;
     const yAxisText = yInput.value;
 
@@ -257,7 +249,7 @@
     const xAxisData = getInputData(xInput.value);
     const yAxisData = getInputData(yInput.value);
 
-    writeTableToDOM(xAxisData, yAxisData, contrastInput);
+    writeTableToDOM(xAxisData, yAxisData);
   }
 
   /**
@@ -270,10 +262,9 @@
     const yInput = e.target.querySelector('.color-input-y');
     const xAxisData = getInputData(xInput.value);
     const yAxisData = yInput.value.trim().length ? getInputData(yInput.value) : getInputData(xInput.value);
-    const contrastInput = e.target.querySelector('#contrast').value;
     e.preventDefault(); // Don't reload the page.
 
-    writeTableToDOM(xAxisData, yAxisData, contrastInput);
+    writeTableToDOM(xAxisData, yAxisData);
   }
 
   /**
@@ -306,7 +297,7 @@
     const yAxisData = dataFromParams.yAxisData ? dataFromParams.yAxisData : xAxisData;
 
     hydrateForm(form, xAxisData, yAxisData);
-    writeTableToDOM(xAxisData, yAxisData, contrastInput, false); // Do not update the query params when writing data to DOM.
+    writeTableToDOM(xAxisData, yAxisData, false); // Do not update the query params when writing data to DOM.
   }
 
   /**
@@ -316,6 +307,7 @@
    */
   function handleRangeBlur(e) {
     contrastValueLabel.textContent = e.target.value;
+    setCellContrast(contrast.value);
   }
 
   /**
@@ -325,6 +317,7 @@
    */
   function handleRangeChange() {
     contrastValueLabel.textContent = contrast.value;
+    setCellContrast(contrast.value);
   }
   /**
    * Handle the click events for the contrast buttons. Updates range input, range label, and output element.
@@ -334,6 +327,26 @@
   function handleContrastButtonClick(e) {
     contrast.value = e.target.dataset.value;
     contrastValueLabel.textContent = e.target.dataset.value;
+    setCellContrast(contrast.value);
+  }
+
+  /**
+   * Set the appearance of cells based whether their value is below the contrast threshhold or not.
+   * 
+   * @param {Number} contrast - Color contrast value set.
+   */
+  function setCellContrast(contrast) {
+    const cells = document.querySelectorAll('.table-container td');
+    cells.forEach((cell) => {
+      const cellValue = parseFloat(cell.textContent);
+      if (cellValue < contrast) {
+        cell.classList.add('doesNotMeet');
+      }
+      else {
+        cell.classList.remove('doesNotMeet');
+      }
+    });
+
   }
 
   /**
@@ -392,7 +405,7 @@
     tableContainer.addEventListener('click', copyOnClick);
 
     hydrateForm(form, xAxisData, yAxisData);
-    writeTableToDOM(xAxisData, yAxisData, 1, false);
+    writeTableToDOM(xAxisData, yAxisData, false);
   }
 
   // Lets do this!

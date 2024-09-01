@@ -23,35 +23,39 @@
     <p>Enter one color per line (this can be almost any format including Hex, RGB, HSL, HSLA, etc). If you choose to not fill in the "Y axis colors" field, we will compare the X axis against itself.</p>
   </header>
   <main class="layout-container">
-    <form class="color-input-form">
-      <label>
-        <div>X axis colors (required). Hex, RGB, HSL, HSLA are all supported</div>
-        <small>This can also have variable names (deliniated from the color with a colon (<code>:</code>).</small>
-        <textarea placeholder="hsl(202, 79%, 50%)&#10;#ff0033&#10;rebeccapurple" class="color-input-x" rows="5" required></textarea>
-      </label>
-      <button class="button-reverse" type="button" aria-label="Reverse X and Y axis data">↑↓</button>
-      <label>
-        <div>Y axis colors (optional)</div>
-        <textarea class="color-input-y" rows="5"></textarea>
-      </label>
-      <label for="contrast">Show colors with at least <span id="contrastValueLabel" aria-live="polite">1</span>:1 contrast ratio</label>
-      <input id="contrast" name="contrast" type="range" min="1" max="21" step="0.5" value="1" list="wcag">
-      <datalist id="wcag">
-        <option value="1">1</option>
-        <option value="3">Large</option>
-        <option value="4.5">Text</option>
-        <option value="7">AAA</option>
-        <option value="21">21</option>
-      </datalist>
-      <div class="datalist-buttons">
-        <button type="button" data-value="1">1</button>
-        <button type="button" data-value="3">Large</button>
-        <button type="button" data-value="4.5">Text</button>
-        <button type="button" data-value="7">AAA</button>
-        <button type="button" data-value="21">21</button>
+    <div class="controls-container">
+      <form class="color-input-form">
+        <label>
+          <div>X axis colors (required). Hex, RGB, HSL, HSLA are all supported</div>
+          <small>This can also have variable names (deliniated from the color with a colon (<code>:</code>).</small>
+          <textarea placeholder="hsl(202, 79%, 50%)&#10;#ff0033&#10;rebeccapurple" class="color-input-x" rows="5" required></textarea>
+        </label>
+        <button class="button-reverse" type="button" aria-label="Reverse X and Y axis data">↑↓</button>
+        <label>
+          <div>Y axis colors (optional)</div>
+          <textarea class="color-input-y" rows="5"></textarea>
+        </label>
+        <button class="button-submit">Build Contrast Grid</button>
+      </form>
+      <div class="contrast-range">
+        <label for="contrast">Show colors with at least <span id="contrastValueLabel" aria-live="polite">1</span>:1 contrast ratio</label>
+        <input id="contrast" name="contrast" type="range" min="1" max="21" step="0.5" value="1" list="wcag">
+        <datalist id="wcag">
+          <option value="1">1</option>
+          <option value="3">Large</option>
+          <option value="4.5">Text</option>
+          <option value="7">AAA</option>
+          <option value="21">21</option>
+        </datalist>
+        <div class="datalist-buttons">
+          <button type="button" data-value="1">1</button>
+          <button type="button" data-value="3">Large</button>
+          <button type="button" data-value="4.5">Text</button>
+          <button type="button" data-value="7">AAA</button>
+          <button type="button" data-value="21">21</button>
+        </div>
       </div>
-      <button class="button-submit">Build Contrast Grid</button>
-    </form>
+    </div>
     <div class="table-container">
       <div class="placeholder">
         <h2>Directions</h2>

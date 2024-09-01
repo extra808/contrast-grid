@@ -1,5 +1,6 @@
 /* Form styles. */
-form {
+form,
+.contrast-range {
   position: sticky;
   left: var(--default-container-padding);
   flex-shrink: 0;
@@ -110,6 +111,10 @@ textarea {
 .overflow {
   max-width: 80vw;
   overflow: auto;
+}
+
+.contrast-range {
+  padding-top: var(--gap);
 }
 
 #contrast {
