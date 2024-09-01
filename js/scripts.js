@@ -123,7 +123,6 @@
    */
   function buildTableTds(xAxisData, compareColor) {
     return xAxisData.map(data => {
-      let tdClass = "";
       const readability = tinycolor.readability(data.color, compareColor);
 
       return `
@@ -302,7 +301,7 @@
 
   /**
    * Handle the blur event for the range input. Ensures output value matches range value.
-   * 
+   *
    * @param {Event} e - The blur event object.
    */
   function handleRangeBlur(e) {
@@ -312,7 +311,7 @@
 
   /**
    * Handle the change event for the range input. Updates range label to match.
-   * 
+   *
    * @param {Event} e - The change event object.
    */
   function handleRangeChange() {
@@ -321,7 +320,7 @@
   }
   /**
    * Handle the click events for the contrast buttons. Updates range input, range label, and output element.
-   * 
+   *
    * @param {Event} e - The click event object.
    */
   function handleContrastButtonClick(e) {
@@ -332,7 +331,7 @@
 
   /**
    * Set the appearance of cells based whether their value is below the contrast threshhold or not.
-   * 
+   *
    * @param {Number} contrast - Color contrast value set.
    */
   function setCellContrast(contrast) {
