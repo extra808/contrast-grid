@@ -315,29 +315,25 @@
    * @param {Event} e - The blur event object.
    */
   function handleRangeBlur(e) {
-    const form = document.querySelector('.color-input-form');
-    form.contrastValue.value = e.target.value;
+    contrastValueLabel.textContent = e.target.value;
   }
 
   /**
-   * Handle the change event for the range input. Updates Hide Colors Below button name to match.
+   * Handle the change event for the range input. Updates range label to match.
    * 
    * @param {Event} e - The change event object.
    */
   function handleRangeChange() {
-    contrastBelow.textContent = contrast.value;
+    contrastValueLabel.textContent = contrast.value;
   }
   /**
-   * Handle the click events for the contrast buttons. Updates range input, output element, 
-   * and Hide Colors Below button.
+   * Handle the click events for the contrast buttons. Updates range input, range label, and output element.
    * 
    * @param {Event} e - The click event object.
    */
   function handleContrastButtonClick(e) {
-    const form = document.querySelector('.color-input-form');
     contrast.value = e.target.dataset.value;
-    form.contrastValue.value = e.target.dataset.value;
-    contrastBelow.textContent = e.target.dataset.value;
+    contrastValueLabel.textContent = e.target.dataset.value;
   }
 
   /**
